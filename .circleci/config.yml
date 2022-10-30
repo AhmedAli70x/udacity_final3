@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs: 
-    slack: circleci/slack@4.10.1
+  slack: circleci/slack@4.10.1
 
 
 
@@ -12,14 +12,7 @@ commands:
             event: fail
             channel: cicd-pipeline
             template: basic_fail_1
-  notify_on_success:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - slack/notify:
-          event: pass
-          channel: cicd-pipeline
-          template: success_tagged_deployment_1
+
 
         
   destroy-environment:
@@ -54,6 +47,16 @@ commands:
             fi
             
 jobs:
+            
+  notify_on_success:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - slack/notify:
+          event: pass
+          channel: cicd-pipeline
+          template: success_tagged_deployment_1
+
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -67,6 +70,8 @@ jobs:
             cd frontend
             npm install
             npm run build
+            
+      - notify_on_failure
   
       - save_cache:
           paths: [frontend/node_modules]
@@ -103,6 +108,8 @@ jobs:
             cd frontend
             npm install 
             npm run test
+
+      - notify_on_failure
                 
   test-backend:
     docker:
@@ -118,6 +125,8 @@ jobs:
             cd backend
             npm install 
             npm run test
+
+      - notify_on_failure
       
             
   scan-frontend:
@@ -135,6 +144,7 @@ jobs:
             npm install
             npm audit fix --force --audit-level=critical
             npm audit --audit-level=critical
+      - notify_on_failure
 
   scan-backend:
     docker:
