@@ -184,8 +184,10 @@ jobs:
           name: Analyze frontend
           command: |
             cd frontend
-            npm audit fix --force --audit-level=critical
-            npm audit --audit-level=critical
+            npm install
+            npm install oauth-sign@^0.9.0
+            npm audit fix --audit-level=critical
+            #npm audit --audit-level=critical
       - notify_on_failure
 
   scan-backend:
