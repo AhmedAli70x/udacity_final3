@@ -1,0 +1,41 @@
+
+
+
+# - name: "download Node.js"
+#   become: true
+#   shell: | 
+#     curl -sl http://deb.nodesource.com/setup_13.x | sudo -E bash -
+
+# - name: "install node"
+#   become: true
+#   apt: 
+#     name: ["nodejs"]
+#     state: latest
+#     update_cache: yes
+
+- name: "Install Node.js 13"
+  shell: |
+    # Install Node.js LTS version as our base Node.js version
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+    sudo apt-get install -y nodejs
+
+    # Use n version manager to use Node.js v13.8.0
+    sudo npm install -g n
+    sudo n 13.8.0
+  
+- name: "Install Pm2 Global"
+  npm: 
+    name: pm2
+    global: yes
+
+
+  environment:
+    TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION')}}"
+    TYPEORM_ENTITIES: "{{ lookup('env', 'TYPEORM_ENTITIES')}}"
+    TYPEORM_HOST: "{{ lookup('env', 'TYPEORM_HOST')}}"
+    TYPEORM_PORT: 5432
+    TYPEORM_USERNAME: "{{ lookup('env', 'TYPEORM_USERNAME')}}"
+    TYPEORM_PASSWORD: "{{ lookup('env', 'TYPEORM_PASSWORD')}}"
+    TYPEORM_DATABASE: "{{ lookup('env', 'TYPEORM_DATABASE')}}"
+    TYPEORM_MIGRATIONS: "{{ lookup('env', 'TYPEORM_MIGRATIONS')}}"
+    TYPEORM_MIGRATIONS_DIR: "{{ lookup('env', 'TYPEORM_MIGRATIONS_DIR')}}"
